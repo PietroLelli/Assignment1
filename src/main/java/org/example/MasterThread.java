@@ -5,10 +5,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -23,10 +20,12 @@ public class MasterThread extends Thread{
     private final int MAXL = 1000;
     private final int N = 10;
 
-    IBoundedBufferFileFind<File> bufferNameFile;
-    IBoundedBuffer<Pair<File, Integer>> bufferCounter;
+    IBufferFileFind<File> bufferNameFile;
+    IBufferCountLines<Pair<File, Integer>> bufferCounter;
     int nConsumers = 5;
-    static Map<String, Long> numFilesLines = new HashMap<>();
+
+    static Map<Pair<Integer, Integer>, List<Integer>> filesInRange = new HashMap<>();
+
 
     public MasterThread(int nWorkers) {
         this.nWorkers = nWorkers;
@@ -47,10 +46,11 @@ public class MasterThread extends Thread{
         }
 
 
-        bufferNameFile = new BoundedBufferFileFind<>(filesPath.size());
+        bufferNameFile = new BufferFileFind<>();
 
         final Comparator<Pair<String, Integer>> comparator = reverseOrder(comparing(Pair::getY));
-        bufferCounter = new BoundedBuffer<>(filesPath.size(), comparator);
+        bufferCounter = new BufferCountLines<>(comparator, filesPath.size());
+
         for(Object o : filesPath){
             try {
                 bufferNameFile.put(new File(o.toString()));
@@ -65,8 +65,12 @@ public class MasterThread extends Thread{
 
 
         try {
-            Thread.sleep(10000);
-            List<Pair<File, Integer>> pair = bufferCounter.get(10);
+            Thread.sleep(5000);
+
+            List<Pair<File, Integer>> pair = bufferCounter.getTopN(10);
+
+
+
             for(Pair<File, Integer> p : pair){
                 System.out.println(p.getX()+" "+p.getY());
             }
@@ -74,42 +78,22 @@ public class MasterThread extends Thread{
             throw new RuntimeException(e);
         }
 
-
-
-
-
-
-
-    /*
-        String path = "./fileExample";
-        File folder = new File(path);
-        File[] listOfFiles = folder.listFiles();
-        try {
-            countLines(listOfFiles);
-           // orderByNumLines();
-        } catch (Exception e) {
-            System.out.println(e);
+        int range = MAXL / (NI - 1);
+        int indexRange=0;
+        for(int i = 0; i < NI -1; i++){
+            filesInRange.put(new Pair<>(indexRange, indexRange+range -1), new ArrayList<>());
+            indexRange += range;
         }
+        filesInRange.put(new Pair<>(indexRange, Integer.MAX_VALUE), new ArrayList<>());
 
-     */
-
-
-
-
-    }
-
-    public static void countLines(File[] listOfFiles) throws IOException {
-        if(listOfFiles != null) {
-            for(File file : listOfFiles) {
-                if(file.isDirectory()) {
-                    countLines(file.listFiles());
-                } else {
-                    numFilesLines.put(file.getName(), Files.lines(Paths.get(file.getPath())).count());
+        for(int i = 0; i < filesPath.size(); i++){
+            Integer countLinesFile = bufferCounter.getItem().getY();
+            for(Pair<Integer, Integer> p : filesInRange.keySet()){
+                if(countLinesFile > p.getX() && countLinesFile < p.getY()){
+                    filesInRange.get(p).add(countLinesFile);
                 }
             }
         }
+        System.out.println(filesInRange);
     }
-
-
-
 }

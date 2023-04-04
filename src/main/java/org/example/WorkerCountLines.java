@@ -7,10 +7,10 @@ import java.util.Scanner;
 
 class WorkerCountLines extends Thread {
 
-	private IBoundedBufferFileFind<File> buffer;
-	private IBoundedBuffer<Pair<File, Integer>> bufferCounter;
+	private IBufferFileFind<File> buffer;
+	private IBufferCountLines<Pair<File, Integer>> bufferCounter;
 	
-	public WorkerCountLines(IBoundedBufferFileFind<File> buffer, IBoundedBuffer<Pair<File, Integer>> bufferCounter){
+	public WorkerCountLines(IBufferFileFind<File> buffer, IBufferCountLines<Pair<File, Integer>> bufferCounter){
 		this.buffer = buffer;
 		this.bufferCounter = bufferCounter;
 	}
