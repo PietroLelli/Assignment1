@@ -1,5 +1,8 @@
-package org.example;
+package org.example.model;
 
+
+import org.example.utils.BufferSynchronized;
+import org.example.utils.Pair;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -7,18 +10,22 @@ import java.util.Scanner;
 
 class WorkerCountLines extends Thread {
 
-	private IBufferFileFind<File> buffer;
-	private IBufferCountLines<Pair<File, Integer>> bufferCounter;
+	private final BufferSynchronized<File> bufferFindFile;
+	private final BufferSynchronized<Pair<File, Integer>> bufferCounter;
 	
-	public WorkerCountLines(IBufferFileFind<File> buffer, IBufferCountLines<Pair<File, Integer>> bufferCounter){
-		this.buffer = buffer;
+	public WorkerCountLines(BufferSynchronized<File> bufferFindFile, BufferSynchronized<Pair<File, Integer>> bufferCounter){
+		this.bufferFindFile = bufferFindFile;
 		this.bufferCounter = bufferCounter;
 	}
 
 	public void run(){
 		while (true){
 			try {
-				File item = buffer.get();
+
+				File item = bufferFindFile.get();
+				if(bufferFindFile == null){
+					break;
+				}
 				consume(item);
 			} catch (InterruptedException ex){
 				ex.printStackTrace();
