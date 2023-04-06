@@ -9,15 +9,14 @@ import java.util.stream.Collectors;
 import static java.util.Collections.reverseOrder;
 import static java.util.Comparator.comparing;
 
-public class ResultsImpl implements Results {
+public class ComputedFileImpl implements ComputedFile {
     private final int nResults;
     final Comparator<Pair<File, Integer>> comparator = reverseOrder(comparing(Pair::getY));
-
     private final Set<Pair<File, Integer>> ranking = new TreeSet<>(comparator);
     private final Lock mutex = new ReentrantLock();
     private final Map<Pair<Integer, Integer>, Integer> filesInRange = new HashMap<>();
 
-    public ResultsImpl(int nResults, int maxL, int numIntervals ) {
+    public ComputedFileImpl(int nResults, int maxL, int numIntervals ) {
         this.nResults = nResults;
         int range = maxL / (numIntervals - 1);
         int indexRange = 0;
@@ -57,7 +56,6 @@ public class ResultsImpl implements Results {
                     filesInRange.replace(p, c+1);
                 }
             }
-
         }finally {
             this.mutex.unlock();
         }

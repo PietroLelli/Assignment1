@@ -1,14 +1,9 @@
 package org.example.model;
 
-import org.example.utils.BufferSynchronized;
-import org.example.utils.Pair;
-import org.example.utils.ResultsImpl;
-
-import java.io.File;
-import java.util.List;
+import org.example.utils.ComputedFile;
 
 public interface Model {
-    ResultsImpl getResult();
+    ComputedFile getResult();
     void setup(int limit, int maxL, int numIntervals);
 
 }

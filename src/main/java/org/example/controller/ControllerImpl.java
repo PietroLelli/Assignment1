@@ -3,8 +3,7 @@ package org.example.controller;
 import org.example.model.MasterThread;
 import org.example.model.Model;
 import org.example.utils.Pair;
-import org.example.utils.Results;
-import org.example.utils.ResultsImpl;
+import org.example.utils.ComputedFile;
 import org.example.view.View;
 
 import java.io.File;
@@ -28,16 +27,12 @@ public class ControllerImpl implements Controller{
     }
 
     @Override
-    public Results getRankingList() {
-        return this.model.getResult();
-    }
-    @Override
     public void processEvent(Runnable runnable){
         new Thread(runnable).start();
     }
 
     @Override
-    public Results getResult() {
+    public ComputedFile getResult() {
         return this.model.getResult();
     }
 
