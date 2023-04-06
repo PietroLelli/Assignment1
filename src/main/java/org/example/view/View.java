@@ -5,4 +5,6 @@ import org.example.model.ModelObserver;
 
 public interface View extends ModelObserver {
     void setController(Controller controller);
+
+    void endComputation();
 }

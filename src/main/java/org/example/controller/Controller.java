@@ -16,4 +16,7 @@ public interface Controller {
     ResultsImpl getResult();
     void addResult(Pair<File, Integer> result);
 
+    void stop();
+
+    void endComputation();
 }

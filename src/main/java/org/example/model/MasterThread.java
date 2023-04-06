@@ -56,7 +56,6 @@ public class MasterThread extends Thread{
         }
 
         bufferCounter = new BufferSynchronizedImpl<>();
-
         for (int i = 0; i < nWorkers; i++){
             new WorkerCountLines(bufferNameFile, bufferCounter).start();
         }
@@ -71,6 +70,6 @@ public class MasterThread extends Thread{
                 throw new RuntimeException(e);
             }
         }
-
+        this.controller.endComputation();
     }
 }

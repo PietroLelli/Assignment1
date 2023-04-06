@@ -56,6 +56,12 @@ public class GuiView implements View{
 
         btnStop.setEnabled(false);
 
+        btnStop.addActionListener(e -> {
+            this.controller.stop();
+            btnStart.setEnabled(true);
+            btnStop.setEnabled(false);
+        });
+
         btnStart.addActionListener(e -> {
             /*if(txtDirectory.getText().isEmpty()){
                 Toast.makeToast(frame, "Insert path of initial directory.", new Color(255,0,0,170), 3);
@@ -122,6 +128,11 @@ public class GuiView implements View{
     @Override
     public void setController(Controller controller) {
         this.controller = controller;
+    }
+
+    @Override
+    public void endComputation() {
+
     }
 
     @Override

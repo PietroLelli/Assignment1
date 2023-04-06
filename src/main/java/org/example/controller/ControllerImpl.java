@@ -53,5 +53,15 @@ public class ControllerImpl implements Controller{
         this.model.getResult().add(result);
     }
 
+    @Override
+    public void stop() {
+        this.masterThread.interrupt();
+    }
+
+    @Override
+    public void endComputation() {
+        this.view.endComputation();
+    }
+
 
 }

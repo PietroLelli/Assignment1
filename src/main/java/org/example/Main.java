@@ -15,14 +15,11 @@ public class Main {
     public static void main(String[] args) {
 
         final Model model = new ModelImpl();
-        final View view = new GuiView();
+        final View view = new ConsoleView();
         final Controller controller = new ControllerImpl(model, view);
 
         model.addObserver(view);
 
-        //controller.start(NUMBER_OF_WORKERS);
-
-
+        controller.start(NUMBER_OF_WORKERS, 10);
     }
-
 }
