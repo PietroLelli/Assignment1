@@ -8,10 +8,7 @@ import java.io.File;
 import java.util.List;
 
 public interface Model {
-    void addObserver(ModelObserver observer);
-    void notifyObservers(ModelObserver.Event event) throws InterruptedException;
-
     ResultsImpl getResult();
-    void setup(int limit);
+    void setup(int limit, int maxL, int numIntervals);
 
 }

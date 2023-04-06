@@ -7,6 +7,8 @@ import org.example.utils.Pair;
 import javax.swing.*;
 import java.awt.*;
 import java.io.File;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 public class GuiView implements View{
     private Controller controller;
@@ -34,13 +36,11 @@ public class GuiView implements View{
         controlPanel.setLayout(new FlowLayout());
 
         final JLabel lblDirectory = new JLabel("Start directory: ");
-        //lblDirectory.setBounds(50, 50, 200, 30);
         final JTextField txtDirectory = new JTextField(20);
         txtDirectory.setMinimumSize(txtDirectory.getPreferredSize());
         txtDirectory.setBounds(50, 80, 200, 30);
 
         final JLabel lblNFiles = new JLabel("Number of files: ");
-        //lblNFiles.setBounds(50, 110, 200, 30);
         txtNFiles = new JTextField(3);
         txtNFiles.setBounds(50, 140, 200, 30);
         txtDirectory.setMinimumSize(txtDirectory.getPreferredSize());
@@ -63,33 +63,12 @@ public class GuiView implements View{
         });
 
         btnStart.addActionListener(e -> {
-            /*if(txtDirectory.getText().isEmpty()){
-                Toast.makeToast(frame, "Insert path of initial directory.", new Color(255,0,0,170), 3);
-                return;
-            }
-            if(txtNFiles.getText().isEmpty() || !Strings.isNumeric(txtNFiles.getText()) || Integer.parseInt(txtNFiles.getText()) <= 0){
-                Toast.makeToast(frame, "Insert correct number of files.", new Color(255,0,0,170), 3);
-                return;
-            }
-            if(txtIntervals.getText().isEmpty() || !Strings.isNumeric(txtIntervals.getText()) || Integer.parseInt(txtNFiles.getText()) <= 0){
-                Toast.makeToast(frame, "Insert correct number of intervals.", new Color(255,0,0,170), 3);
-                return;
-            }
-            if(txtLastInterval.getText().isEmpty() || !Strings.isNumeric(txtLastInterval.getText()) || Integer.parseInt(txtNFiles.getText()) <= 0){
-                Toast.makeToast(frame, "Insert correct last interval value.", new Color(255,0,0,170), 3);
-                return;
-            }*/
 
             btnStart.setEnabled(false);
             btnStop.setEnabled(true);
 
-            /*this.rankingList.setModel(new DefaultListModel<>());
-            this.distributionList.setModel(new DefaultListModel<>());*/
-
-
-            //this.controller.start(5,Integer.parseInt(txtNFiles.getText()));
             this.controller.processEvent(() -> {
-                this.controller.start(5,Integer.parseInt(txtNFiles.getText()));
+                this.controller.start(5, txtDirectory.getText(), Integer.parseInt(txtNFiles.getText()), Integer.parseInt(txtLastInterval.getText()), Integer.parseInt(txtIntervals.getText()));
             });
 
             this.rankingList.setModel(new DefaultListModel<>());
@@ -140,6 +119,11 @@ public class GuiView implements View{
         DefaultListModel<Pair<File, Integer>> rankingModel = new DefaultListModel<>();
         rankingModel.addAll(this.controller.getResult().getRanking());
 
+        DefaultListModel<String> intervalsModel = new DefaultListModel<>();
+        intervalsModel.addAll(this.controller.getResult().getFilesInRange().entrySet().stream().map(e->e.getKey().getX()+"-"+e.getKey().getY()+": "+e.getValue()).collect(Collectors.toList()));
+
         SwingUtilities.invokeLater(() -> rankingList.setModel(rankingModel));
+        SwingUtilities.invokeLater(() -> distributionList.setModel(intervalsModel));
+
     }
 }

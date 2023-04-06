@@ -24,10 +24,11 @@ public class MasterThread extends Thread{
 
     BufferSynchronized<File> bufferNameFile;
     BufferSynchronized<Pair<File, Integer>> bufferCounter;
-    int nConsumers = 5;
     private Controller controller;
+    String path;
 
-    public MasterThread(int nWorkers, Controller controller) {
+    public MasterThread(String path, int nWorkers, Controller controller) {
+        this.path = path;
         this.nWorkers = nWorkers;
         this.controller = controller;
     }
@@ -36,7 +37,7 @@ public class MasterThread extends Thread{
     public void run() {
 
         List<Object> filesPath;
-        try (Stream<Path> walk = Files.walk(Paths.get("./fileExample"))) {
+        try (Stream<Path> walk = Files.walk(Paths.get(path))) {
             filesPath = walk
                     .filter(p -> !Files.isDirectory(p))   // not a directory
                     .map(p -> p.toString().toLowerCase()) // convert path to string
@@ -64,7 +65,7 @@ public class MasterThread extends Thread{
             try {
                 Pair<File, Integer> result = bufferCounter.get();
                 this.controller.addResult(result);
-                this.controller.notifyObservers(ModelObserver.Event.RESULT_UPDATED);
+                this.controller.updateResult();
 
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);

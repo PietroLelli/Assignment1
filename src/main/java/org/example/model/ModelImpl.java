@@ -15,27 +15,10 @@ import static java.util.Collections.reverseOrder;
 import static java.util.Comparator.comparing;
 
 public class ModelImpl implements Model{
-    private final List<ModelObserver> observers = new LinkedList<>();
     private ResultsImpl results;
 
-    public void setup(int limit) {
-        this.results = new ResultsImpl(limit);
-    }
-
-    @Override
-    public void addObserver(ModelObserver observer){
-        this.observers.add(observer);
-    }
-
-
-    @Override
-    public void notifyObservers(ModelObserver.Event event) throws InterruptedException {
-        for(ModelObserver observer : this.observers){
-            switch (event){
-                case RESULT_UPDATED -> observer.resultsUpdated();
-                //case COMPUTATION_ENDED -> observer.computationEnded();
-            }
-        }
+    public void setup(int limit, int maxL, int numIntervals) {
+        this.results = new ResultsImpl(limit, maxL, numIntervals);
     }
 
     @Override

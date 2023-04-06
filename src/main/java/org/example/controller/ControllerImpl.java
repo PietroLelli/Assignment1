@@ -2,20 +2,17 @@ package org.example.controller;
 
 import org.example.model.MasterThread;
 import org.example.model.Model;
-import org.example.model.ModelObserver;
-import org.example.utils.BufferSynchronized;
 import org.example.utils.Pair;
+import org.example.utils.Results;
 import org.example.utils.ResultsImpl;
 import org.example.view.View;
 
 import java.io.File;
-import java.util.List;
 
 public class ControllerImpl implements Controller{
     private final Model model;
     private final View view;
     private MasterThread masterThread;
-
 
     public ControllerImpl(Model model, View view){
         this.model = model;
@@ -24,14 +21,14 @@ public class ControllerImpl implements Controller{
     }
 
     @Override
-    public void start(int numberOfWorkers, int topN) {
-        this.model.setup(topN);
-        masterThread = new MasterThread(numberOfWorkers, this);
+    public void start(int numberOfWorkers, String path, int topN, int maxL, int numIntervals) {
+        this.model.setup(topN, maxL, numIntervals);
+        masterThread = new MasterThread(path, numberOfWorkers, this);
         masterThread.start();
     }
 
     @Override
-    public ResultsImpl getRankingList() {
+    public Results getRankingList() {
         return this.model.getResult();
     }
     @Override
@@ -40,12 +37,7 @@ public class ControllerImpl implements Controller{
     }
 
     @Override
-    public void notifyObservers(ModelObserver.Event event) throws InterruptedException {
-        this.model.notifyObservers(event);
-    }
-
-    @Override
-    public ResultsImpl getResult() {
+    public Results getResult() {
         return this.model.getResult();
     }
 
@@ -59,9 +51,12 @@ public class ControllerImpl implements Controller{
     }
 
     @Override
+    public void updateResult() throws InterruptedException {
+        this.view.resultsUpdated();
+    }
+
+    @Override
     public void endComputation() {
         this.view.endComputation();
     }
-
-
 }
