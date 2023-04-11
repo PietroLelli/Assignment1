@@ -37,19 +37,6 @@ public class BufferSynchronizedImpl<Item> implements BufferSynchronized<Item> {
         }
     }
 
-    /*@Override
-    public Optional<T> remove(){
-        try{
-            mutex.lock();
-            if(this.list.isEmpty()){
-                return Optional.empty();
-            }
-            return Optional.of(this.list.remove(0));
-        } finally {
-            mutex.unlock();
-        }
-    }*/
-
     @Override
     public boolean isEmpty() {
         try{
